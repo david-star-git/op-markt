@@ -57,7 +57,8 @@ Install the required dependencies: `pip install discord.py aiohttp`
 {
     "name": "OP-Markt",         <- bot username
     "activity": "the market.",  <- bot activity
-    "embed_hex": "0x60aefa"     <- embed color
+    "embed_hex": "0x60aefa",    <- embed color
+    "last_refresh": 0           <- timestamp of the last data refresh
 }
 ```
 
@@ -112,6 +113,10 @@ While other algorithms like Jaccard similarity or cosine similarity could also b
 - **Handling Special Cases**:
   - If there are no substring matches, the algorithm falls back to a general fuzzy match using Levenshtein distance.
   - Specificity is prioritized when lengths and distances are close.
+
+## Data Refresh
+
+The bot refreshes its data every 60 minutes to ensure that it provides up-to-date information. The timestamp of the last refresh is stored in `data/config.json` under `"last_refresh"`. This approach is designed to avoid excessive API calls and reduce server resource usage, enhancing efficiency. By keeping track of when the last refresh occurred, the bot ensures that it only refreshes data when necessary, thereby minimizing the load on the server and conserving resources. If the bot is restarted, it will remember when the last refresh took place and continue operating efficiently.
 
 ## Formatting Prices
 

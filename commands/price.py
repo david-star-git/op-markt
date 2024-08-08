@@ -7,11 +7,9 @@ import base64
 from discord import app_commands
 from discord.ext import commands
 
-# Retrieve the current file path and name
 current_file_path = __file__
 current_file_name = os.path.basename(current_file_path)
 
-# Load the configuration from 'data/config.json'
 try:
     with open('data/config.json') as file:
         config = json.load(file)
@@ -21,16 +19,23 @@ except FileNotFoundError:
 except json.JSONDecodeError:
     print(f"Invalid JSON format in {current_file_name}")
 
-# Set embed color from configuration
 embed_color = int(config['embed_hex'], 16)
 
 class MarketCog(commands.Cog):
     def __init__(self, bot):
+        """
+        Initialize the MarketCog with bot instance and set up API configurations.
+        
+        Args:
+            bot (commands.Bot): The bot instance to which this cog is attached.
+        """
         self.bot = bot
         self.api_url = "https://api.opsucht.net/market"
         self.items_file = "data/items.json"
+        self.prices_file = "data/prices.json"
+        self.config_file = "data/config.json"
         self.load_api_credentials()
-        self.last_refresh = 0
+        self.load_last_refresh_time()
 
     def load_api_credentials(self):
         """Load API credentials from 'api.json'."""
@@ -40,7 +45,12 @@ class MarketCog(commands.Cog):
             self.api_uname = credentials["API-UNAME"]
 
     def get_headers(self):
-        """Generate headers for API requests with Basic Auth."""
+        """
+        Generate headers for API requests with Basic Auth.
+        
+        Returns:
+            dict: Headers including the Authorization and User-Agent.
+        """
         auth_str = f"{self.api_uname}:{self.api_key}"
         b64_auth_str = base64.b64encode(auth_str.encode()).decode()
         return {
@@ -48,36 +58,88 @@ class MarketCog(commands.Cog):
             "User-Agent": f"{self.api_uname}"
         }
 
-    async def refresh_items(self):
-        """Refresh item data from the API if the file is outdated or missing."""
-        if not os.path.exists(self.items_file) or time.time() - self.last_refresh > 3600:
+    def load_last_refresh_time(self):
+        """
+        Load the last refresh time from the configuration file.
+        
+        If the file or JSON is not valid, initializes last refresh time to 0.
+        """
+        try:
+            with open(self.config_file, "r") as f:
+                config = json.load(f)
+                self.last_refresh = config.get("last_refresh", 0)
+                print(f"Loaded last refresh time: {self.last_refresh}")
+        except FileNotFoundError:
+            self.last_refresh = 0
+            print("Config file not found. Initializing last refresh time to 0.")
+        except json.JSONDecodeError:
+            self.last_refresh = 0
+            print("Invalid JSON format in config file. Initializing last refresh time to 0.")
+
+    def save_last_refresh_time(self):
+        """
+        Save the last refresh time to the configuration file.
+        
+        Creates or updates the config file to store the latest refresh time.
+        """
+        try:
+            with open(self.config_file, "r+") as f:
+                config = json.load(f)
+                config["last_refresh"] = self.last_refresh
+                f.seek(0)
+                json.dump(config, f, indent=4)
+                f.truncate()
+        except FileNotFoundError:
+            with open(self.config_file, "w") as f:
+                json.dump({"last_refresh": self.last_refresh}, f, indent=4)
+        except json.JSONDecodeError:
+            with open(self.config_file, "w") as f:
+                json.dump({"last_refresh": self.last_refresh}, f, indent=4)
+
+    async def refresh_data(self):
+        """
+        Refresh item and price data from the API if the file is outdated or missing.
+        
+        Data is refreshed if the last refresh time is older than 60 minutes or if files do not exist.
+        """
+        if not os.path.exists(self.prices_file) or time.time() - self.last_refresh > 3600:
             async with aiohttp.ClientSession() as session:
-                async with session.get(f"{self.api_url}/items", headers=self.get_headers()) as response:
-                    if response.status == 200:
-                        items = await response.json()
-                        os.makedirs(os.path.dirname(self.items_file), exist_ok=True)
-                        with open(self.items_file, "w") as f:
-                            json.dump(items, f)
-                        self.last_refresh = time.time()
-                        print("Refreshed data/items.json")
-                    else:
-                        print(f"Failed to refresh items: {response.status}")
+                async with session.get(f"{self.api_url}/items", headers=self.get_headers()) as items_response:
+                    async with session.get(f"{self.api_url}/prices", headers=self.get_headers()) as prices_response:
+                        if items_response.status == 200 and prices_response.status == 200:
+                            items = await items_response.json()
+                            prices = await prices_response.json()
+                            os.makedirs(os.path.dirname(self.items_file), exist_ok=True)
+                            
+                            with open(self.items_file, "w") as f:
+                                json.dump(items, f)
+                            
+                            with open(self.prices_file, "w") as f:
+                                json.dump(prices, f)
+                            
+                            self.last_refresh = time.time()
+                            self.save_last_refresh_time()
+                            print("Refreshed data/items.json and data/prices.json")
+                        else:
+                            print(f"Failed to refresh data: items status {items_response.status}, prices status {prices_response.status}")
 
     def levenshtein_distance(self, s1: str, s2: str) -> int:
         """
         Calculate the Levenshtein distance between two strings.
+        
         Args:
             s1 (str): First string.
             s2 (str): Second string.
+        
         Returns:
-            int: Levenshtein distance between s1 and s2.
+            int: The Levenshtein distance between the two strings.
         """
         if len(s1) < len(s2):
             return self.levenshtein_distance(s2, s1)
-        
+
         if len(s2) == 0:
             return len(s1)
-        
+
         previous_row = range(len(s2) + 1)
         for i, c1 in enumerate(s1):
             current_row = [i + 1]
@@ -93,9 +155,11 @@ class MarketCog(commands.Cog):
     def find_best_match(self, query: str, items: list[str]) -> str:
         """
         Find the best matching item from a list based on the query string using fuzzy matching.
+        
         Args:
             query (str): Query string to match.
             items (list[str]): List of item names to search.
+        
         Returns:
             str: The best matching item name.
         """
@@ -132,18 +196,22 @@ class MarketCog(commands.Cog):
     def format_item_name(self, item_name: str) -> str:
         """
         Format item names for display, capitalizing each word.
+        
         Args:
             item_name (str): The item name to format.
+        
         Returns:
-            str: Formatted item name.
+            str: The formatted item name.
         """
         return ' '.join(word.capitalize() for word in item_name.replace('_', ' ').split())
 
     def get_item_image_url(self, item_name: str) -> str:
         """
         Generate the URL for the item image.
+        
         Args:
-            item_name (str): The item name to create the URL for.
+            item_name (str): The item name to generate the image URL for.
+        
         Returns:
             str: The URL of the item image.
         """
@@ -153,10 +221,12 @@ class MarketCog(commands.Cog):
     def format_price(self, price: float) -> str:
         """
         Format a price with thousand separators and currency symbol.
+        
         Args:
             price (float): The price to format.
+        
         Returns:
-            str: Formatted price with currency symbol.
+            str: The formatted price with currency symbol.
         """
         rounded_price = round(price, 1)
         formatted_price = f"{rounded_price:,.1f}".replace(',', ' ').replace('.', ',').replace(' ', '.')
@@ -166,51 +236,58 @@ class MarketCog(commands.Cog):
     async def fetch_price(self, interaction: discord.Interaction, item_name: str):
         """
         Command to fetch and display the price for an item.
+        
         Args:
-            interaction (discord.Interaction): The interaction that triggered the command.
+            interaction (discord.Interaction): The interaction object for the command.
             item_name (str): The name of the item to fetch the price for.
         """
-        await self.refresh_items()
+        await self.refresh_data()
+        
+        # Load items and prices data
         with open(self.items_file, "r") as f:
             items = json.load(f)
+        with open(self.prices_file, "r") as f:
+            prices = json.load(f)
 
+        # Find the best match from items list
         best_match = self.find_best_match(item_name, items)
         if best_match:
             item_name_formatted = self.format_item_name(best_match)
             item_image_url = self.get_item_image_url(best_match)
             buy_price = None
             sell_price = None
+            category_found = None
+
+            # Find prices in the prices data
+            for category, category_items in prices.items():
+                if best_match in category_items:
+                    category_found = category
+                    for price_info in category_items[best_match]:
+                        if price_info['orderSide'] == 'BUY':
+                            buy_price = price_info['price']
+                        elif price_info['orderSide'] == 'SELL':
+                            sell_price = price_info['price']
+                    break  # Exit loop once the item is found
             
-            # Fetch prices from the API
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f"{self.api_url}/price/{best_match}", headers=self.get_headers()) as response:
-                    if response.status == 200:
-                        price_data = await response.json()
-                        
-                        for price_info in price_data.get(best_match, []):
-                            if price_info['orderSide'] == 'BUY':
-                                buy_price = price_info['price']
-                            elif price_info['orderSide'] == 'SELL':
-                                sell_price = price_info['price']
-                        
-                        # Create an embed message with price details
-                        embed = discord.Embed(title=item_name_formatted, description=f"Prices for {item_name_formatted}", color=embed_color)
-                        embed.set_thumbnail(url=item_image_url)
-                        
-                        if buy_price is not None:
-                            embed.add_field(name="Buy Price", value=self.format_price(buy_price), inline=True)
-                        else:
-                            embed.add_field(name="Buy Price", value="Not available", inline=True)
-                        
-                        if sell_price is not None:
-                            embed.add_field(name="Sell Price", value=self.format_price(sell_price), inline=True)
-                        else:
-                            embed.add_field(name="Sell Price", value="Not available", inline=True)
-                        
-                        embed.set_footer(text=f"{config['name']} • JinglingJester")
-                        await interaction.response.send_message(embed=embed)
-                    else:
-                        await interaction.response.send_message(f"Failed to fetch the price. HTTP Status: {response.status}")
+            if category_found:
+                embed = discord.Embed(title=item_name_formatted, description=f"**Category**: {category_found}", color=embed_color)
+            else:
+                embed = discord.Embed(title=item_name_formatted, description=f"**Category**: NOT_FOUND", color=embed_color)
+            embed.set_thumbnail(url=item_image_url)
+
+            if buy_price is not None:
+                embed.add_field(name="Buy Price", value=self.format_price(buy_price), inline=True)
+            else:
+                embed.add_field(name="Buy Price", value="Not available", inline=True)
+
+            if sell_price is not None:
+                embed.add_field(name="Sell Price", value=self.format_price(sell_price), inline=True)
+            else:
+                embed.add_field(name="Sell Price", value="Not available", inline=True)
+
+            embed.set_footer(text=f"{config['name']} • JinglingJester")
+
+            await interaction.response.send_message(embed=embed)
         else:
             await interaction.response.send_message("No matching item found.")
 
