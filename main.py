@@ -4,7 +4,6 @@ import os
 from discord.ext import commands
 import json
 import os
-import aiosqlite
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -29,21 +28,6 @@ except FileNotFoundError:
     print(f"File not found in {current_file_name}.")
 except json.JSONDecodeError:
     print(f"Invalid json format in {current_file_name}")
-
-# Initialize the database
-async def init_db():
-    async with aiosqlite.connect("reputation.db") as db:
-        await db.execute("""CREATE TABLE IF NOT EXISTS reputation (
-                            id INTEGER PRIMARY KEY,
-                            giver_id TEXT NOT NULL,
-                            receiver_uuid TEXT NOT NULL,
-                            reputation INTEGER NOT NULL,
-                            UNIQUE(giver_id, receiver_uuid))""")
-        await db.execute("""CREATE TABLE IF NOT EXISTS users (
-                            id INTEGER PRIMARY KEY,
-                            uuid TEXT NOT NULL,
-                            username TEXT NOT NULL)""")
-        await db.commit()
 
 async def load_commands():
     for filename in os.listdir('./commands'):
