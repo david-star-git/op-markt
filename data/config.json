@@ -2,5 +2,6 @@
     "name": "OP-Markt",
     "activity": "the market.",
     "embed_hex": "0x60aefa",
-    "last_refresh": 1723159024.1022928
+    "update_interval": "3600",
+    "last_refresh": 1723235538.7856596
 }

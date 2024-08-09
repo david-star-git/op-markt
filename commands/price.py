@@ -36,6 +36,7 @@ class MarketCog(commands.Cog):
         self.config_file = "data/config.json"
         self.load_api_credentials()
         self.load_last_refresh_time()
+        self.update_interval = int(config.get("update_interval", 3600))
 
     def load_api_credentials(self):
         """Load API credentials from 'api.json'."""
@@ -102,7 +103,7 @@ class MarketCog(commands.Cog):
         
         Data is refreshed if the last refresh time is older than 60 minutes or if files do not exist.
         """
-        if not os.path.exists(self.prices_file) or time.time() - self.last_refresh > 3600:
+        if not os.path.exists(self.prices_file) or time.time() - self.last_refresh > self.update_interval:
             async with aiohttp.ClientSession() as session:
                 async with session.get(f"{self.api_url}/items", headers=self.get_headers()) as items_response:
                     async with session.get(f"{self.api_url}/prices", headers=self.get_headers()) as prices_response:
