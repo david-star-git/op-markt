@@ -145,6 +145,16 @@ For an item like `diamond`, the image URL is:
 - The description includes price information.
 - The thumbnail is the item’s image.
 
+## TODO
+
+- [x] Add image to embed.
+- [x] Write a markdown.
+- [x] Add categories.
+- [ ] Add support for german itemnames.
+- [ ] Translate to german.
+- [ ] Keep it efficient.
+- [ ] KISS
+
 ## Contributing
 
 If you’d like to contribute to this project, please fork the repository and submit a pull request with your changes. Ensure to follow the coding standards and provide documentation for new features.
