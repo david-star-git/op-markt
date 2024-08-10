@@ -202,7 +202,7 @@ class MarketCog(commands.Cog):
         """Format a price with thousand separators and currency symbol."""
         rounded_price = round(price, 1)
         formatted_price = f"{rounded_price:,.1f}".replace(',', ' ').replace('.', ',').replace(' ', '.')
-        return formatted_price + " $"
+        return  "$ " + formatted_price
 
     @app_commands.command(name="price", description="Get the price for an item")
     async def fetch_price(self, interaction: discord.Interaction, item_name: str):
@@ -242,26 +242,26 @@ class MarketCog(commands.Cog):
                     break  # Exit loop once the item is found
             
             if category_found:
-                embed = discord.Embed(title=item_name_formatted, description=f"**Category**: {category_found}", color=embed_color)
+                embed = discord.Embed(title=item_name_formatted, description=f"**Kategorie**: {category_found}", color=embed_color)
             else:
-                embed = discord.Embed(title=item_name_formatted, description=f"**Category**: NOT_FOUND", color=embed_color)
+                embed = discord.Embed(title=item_name_formatted, description=f"**Kategorie**: NOT_FOUND", color=embed_color)
             embed.set_thumbnail(url=item_image_url)
 
             if buy_price is not None:
-                embed.add_field(name="Buy Price", value=self.format_price(buy_price), inline=True)
+                embed.add_field(name="Kaufpreis", value=self.format_price(buy_price), inline=True)
             else:
-                embed.add_field(name="Buy Price", value="Not available", inline=True)
+                embed.add_field(name="Kaufpreis", value="Nicht verfügbar", inline=True)
 
             if sell_price is not None:
-                embed.add_field(name="Sell Price", value=self.format_price(sell_price), inline=True)
+                embed.add_field(name="Verkaufspreis", value=self.format_price(sell_price), inline=True)
             else:
-                embed.add_field(name="Sell Price", value="Not available", inline=True)
+                embed.add_field(name="Verkaufspreis", value="Nicht verfügbar", inline=True)
 
             embed.set_footer(text=f"{config['name']} • JinglingJester")
 
             await interaction.response.send_message(embed=embed)
         else:
-            await interaction.response.send_message("No matching item found.")
+            await interaction.response.send_message("Kein passender Item gefunden.")
 
 async def setup(bot: commands.Bot):
     """Setup function to add the MarketCog to the bot."""
