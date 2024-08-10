@@ -46,12 +46,7 @@ class MarketCog(commands.Cog):
             self.api_uname = credentials["API-UNAME"]
 
     def get_headers(self):
-        """
-        Generate headers for API requests with Basic Auth.
-        
-        Returns:
-            dict: Headers including the Authorization and User-Agent.
-        """
+        """Generate headers for API requests with Basic Auth."""
         auth_str = f"{self.api_uname}:{self.api_key}"
         b64_auth_str = base64.b64encode(auth_str.encode()).decode()
         return {
@@ -195,40 +190,16 @@ class MarketCog(commands.Cog):
         return closest_match
 
     def format_item_name(self, item_name: str) -> str:
-        """
-        Format item names for display, capitalizing each word.
-        
-        Args:
-            item_name (str): The item name to format.
-        
-        Returns:
-            str: The formatted item name.
-        """
+        """Format item names for display, capitalizing each word."""
         return ' '.join(word.capitalize() for word in item_name.replace('_', ' ').split())
 
     def get_item_image_url(self, item_name: str) -> str:
-        """
-        Generate the URL for the item image.
-        
-        Args:
-            item_name (str): The item name to generate the image URL for.
-        
-        Returns:
-            str: The URL of the item image.
-        """
+        """Generate the URL for the item image."""
         formatted_name = item_name.lower().replace(' ', '_')
         return f"https://mc.nerothe.com/img/1.21/minecraft_{formatted_name}.png"
 
     def format_price(self, price: float) -> str:
-        """
-        Format a price with thousand separators and currency symbol.
-        
-        Args:
-            price (float): The price to format.
-        
-        Returns:
-            str: The formatted price with currency symbol.
-        """
+        """Format a price with thousand separators and currency symbol."""
         rounded_price = round(price, 1)
         formatted_price = f"{rounded_price:,.1f}".replace(',', ' ').replace('.', ',').replace(' ', '.')
         return formatted_price + " $"
