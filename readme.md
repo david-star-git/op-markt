@@ -35,7 +35,7 @@ The OP-Markt Bot is a versatile tool designed to enhance the Minecraft experienc
 
 #### Install Dependencies
 
-Install the required dependencies: `pip install discord.py aiohttp`
+Install the required dependencies: `pip install discord.py aiohttp matplotlib pandas`
 
 #### Configure API Credentials
 
@@ -181,6 +181,8 @@ The OP-Markt Bot includes a price history graph feature that provides visual ins
 ## New Features
 
 - **Price History Graph**: The /price command now includes a graph showing the price history for the past 30 days. The graph displays buy prices in blue and sell prices in red, with formatted y-axis labels and transparent background. The graph title uses the formatted item name.
+
+You need to install `matplotlib` and `pandas` for the price graph to work.
 
 ## TODO
 

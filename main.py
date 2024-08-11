@@ -5,7 +5,7 @@ import json
 import aiohttp
 import base64
 from discord.ext import commands
-from datetime import datetime as dt, date  # Import date
+from datetime import datetime as dt, date
 
 # Define bot intents for message content access
 intents = discord.Intents.default()
