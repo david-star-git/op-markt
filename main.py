@@ -7,6 +7,7 @@ import aiohttp
 import base64
 from discord.ext import commands
 import datetime
+from datetime import datetime as dt
 
 # Define bot intents for message content access
 intents = discord.Intents.default()
@@ -59,6 +60,7 @@ async def save_daily_prices():
     os.makedirs(os.path.dirname(daily_prices_file), exist_ok=True)
 
     # Save today's prices to the daily file
+    current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
         with open(prices_file, "r") as f:
             prices_data = json.load(f)
@@ -66,9 +68,9 @@ async def save_daily_prices():
         with open(daily_prices_file, "w") as f:
             json.dump(prices_data, f, indent=4)
 
-        print(f"Saved daily prices to {daily_prices_file}")
+        print(f"[{current_time}] Saved daily prices to {daily_prices_file}")
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Error saving daily prices: {e}")
+        print(f"[{current_time}] Error saving daily prices: {e}")
 
 async def cleanup_old_files():
     """Delete files older than 30 days."""
@@ -78,7 +80,8 @@ async def cleanup_old_files():
             file_date = datetime.datetime.strptime(filename[:-5], "%d-%m-%Y").date()
             if (today - file_date).days > 30:
                 os.remove(os.path.join("data/prices", filename))
-                print(f"Deleted old file: {filename}")
+                current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
+                print(f"[{current_time}] Deleted old file: {filename}")
 
 async def periodic_refresh():
     """Periodically refresh and save price data every 60 minutes."""
@@ -87,7 +90,8 @@ async def periodic_refresh():
             await save_daily_prices()  # Save the daily prices
             await cleanup_old_files()  # Clean up old price files
         except Exception as e:
-            print(f"Error during periodic refresh: {e}")
+            current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
+            print(f"[{current_time}] Error during periodic refresh: {e}")
         await asyncio.sleep(3600)  # Wait for 60 minutes
 
 
@@ -99,11 +103,12 @@ async def load_cogs():
     for filename in os.listdir(cogs_directory):
         if filename.endswith(".py") and filename != "__init__.py":
             cog_name = filename[:-3]  # Remove ".py" extension
+            current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
             try:
                 await client.load_extension(f'{cogs_directory}.{cog_name}')
-                print(f"Successfully loaded {cog_name}.")
+                print(f"[{current_time}] Successfully loaded {cog_name}.")
             except Exception as e:
-                print(f"Failed to load {cog_name}: {e}")
+                print(f"[{current_time}] Failed to load {cog_name}: {e}")
 
 @client.event
 async def on_ready():
@@ -112,12 +117,13 @@ async def on_ready():
     Loads commands, prints the bot's information,
     synchronizes commands, and sets the bot's activity status.
     """
+    current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
     await load_cogs()  # Load the MarketCog
-    print(f"Logged in as {str(client.user)[:-5]} (ID: {client.user.id})")
+    print(f"[{current_time}] Logged in as {str(client.user)[:-5]} (ID: {client.user.id})")
     
     # Synchronize application commands
     synced = await client.tree.sync()
-    print(f"Synced {str(len(synced))} Commands")
+    print(f"[{current_time}] Synced {str(len(synced))} Commands")
     
     # Set the bot's activity status
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"{config['activity']}"))

@@ -45,7 +45,8 @@ Install the required dependencies: `pip install discord.py aiohttp`
 {
     "TOKEN": "DISCORD BOT TOKEN",
     "API-KEY": "OPSCHT API KEY",
-    "API-UNAME": "OPSUCHT API USERNAME"
+    "API-UNAME": "OPSUCHT API USERNAME",
+    "API_URL": "https://api.opsucht.net/market"
 }
 ```
 
@@ -145,13 +146,50 @@ For an item like `diamond`, the image URL is:
 - The description includes price information.
 - The thumbnail is the item’s image.
 
+## Price History Graph
+
+The OP-Markt Bot includes a price history graph feature that provides visual insights into the price trends of items over the past 30 days. This feature is integrated into the /price command, enhancing the user experience by offering a dynamic representation of price fluctuations.
+
+### How It Works
+
+1. Data Collection:
+    - **Daily Refresh**: The bot refreshes item prices daily and saves the data into data/prices/ directory.
+    - **File Management**: Each day’s price data is stored in a file named with the date (e.g., 10.08.2024.json).
+2. Graph Generation:
+    - **Data Aggregation**: When generating the graph, the bot aggregates price data from the last 30 days. Prices are extracted from the daily JSON files.
+    - **Handling Missing Data**: If an item’s price is not available for a particular day, it is defaulted to zero to maintain continuity in the graph.
+3. **Graph Construction**:
+    - **X-Axis**: Represents the days over the past 30 days.
+    - **Y-Axis**: Shows the price values, formatted with thousands (k) and millions (M) for large numbers.
+    - **Data Series**:
+      - **Buy Prices**: Displayed as a blue line.
+      - **Sell Prices**: Displayed as a red line.
+    - **Graph Formatting**: The graph is dynamically created with a transparent background to seamlessly integrate with Discord embeds.
+4. **Title and Labels**:
+    - **Graph Title**: Uses the formatted item name to clearly identify the item being analyzed.
+    - **Axis Labels**: Include date and price labels formatted for readability.
+5. **Embed Integration**:
+    - **Image Embedding**: The generated graph image is embedded in the Discord response for the /price command.
+    - **Visual Presentation**: The graph is displayed below the item’s price details, providing a clear visual representation of price trends.
+
+### Benefits
+
+- **Visual Insight**: Allows users to quickly understand price trends and fluctuations over time.
+- **Enhanced User Experience**: Provides a more engaging way to view price data compared to text-based reports.
+- **Dynamic Updates**: Ensures that the graph reflects the most recent 30 days of data, keeping the information relevant and up-to-date.
+
+## New Features
+
+- **Price History Graph**: The /price command now includes a graph showing the price history for the past 30 days. The graph displays buy prices in blue and sell prices in red, with formatted y-axis labels and transparent background. The graph title uses the formatted item name.
+
 ## TODO
 
 - [x] Add image to embed.
 - [x] Write a markdown.
 - [x] Add categories.
+- [x] Add graph to show item price changes.
 - [ ] Add support for german itemnames.
-- [ ] Translate to german.
+- [x] Translate to german.
 - [ ] Keep it efficient.
 - [ ] KISS
 
