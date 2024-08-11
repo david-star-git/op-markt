@@ -6,10 +6,18 @@ import time
 import base64
 from discord import app_commands
 from discord.ext import commands
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import matplotlib.ticker as ticker
+from datetime import datetime, timedelta
+import pandas as pd
+import io
 
+# Retrieve the current file path and name
 current_file_path = __file__
 current_file_name = os.path.basename(current_file_path)
 
+# Load configuration from 'data/config.json'
 try:
     with open('data/config.json') as file:
         config = json.load(file)
@@ -18,8 +26,6 @@ except FileNotFoundError:
     print(f"File not found in {current_file_name}.")
 except json.JSONDecodeError:
     print(f"Invalid JSON format in {current_file_name}")
-
-embed_color = int(config['embed_hex'], 16)
 
 class MarketCog(commands.Cog):
     def __init__(self, bot):
@@ -35,8 +41,11 @@ class MarketCog(commands.Cog):
         self.prices_file = "data/prices.json"
         self.config_file = "data/config.json"
         self.load_api_credentials()
-        self.load_last_refresh_time()
-        self.update_interval = int(config.get("update_interval", 3600))
+
+        # Load the config file and set embed color
+        with open(self.config_file, "r") as f:
+            self.config = json.load(f)
+        self.embed_color = int(self.config['embed_hex'], 16)
 
     def load_api_credentials(self):
         """Load API credentials from 'api.json'."""
@@ -53,71 +62,6 @@ class MarketCog(commands.Cog):
             "Authorization": f"Basic {b64_auth_str}",
             "User-Agent": f"{self.api_uname}"
         }
-
-    def load_last_refresh_time(self):
-        """
-        Load the last refresh time from the configuration file.
-        
-        If the file or JSON is not valid, initializes last refresh time to 0.
-        """
-        try:
-            with open(self.config_file, "r") as f:
-                config = json.load(f)
-                self.last_refresh = config.get("last_refresh", 0)
-                print(f"Loaded last refresh time: {self.last_refresh}")
-        except FileNotFoundError:
-            self.last_refresh = 0
-            print("Config file not found. Initializing last refresh time to 0.")
-        except json.JSONDecodeError:
-            self.last_refresh = 0
-            print("Invalid JSON format in config file. Initializing last refresh time to 0.")
-
-    def save_last_refresh_time(self):
-        """
-        Save the last refresh time to the configuration file.
-        
-        Creates or updates the config file to store the latest refresh time.
-        """
-        try:
-            with open(self.config_file, "r+") as f:
-                config = json.load(f)
-                config["last_refresh"] = self.last_refresh
-                f.seek(0)
-                json.dump(config, f, indent=4)
-                f.truncate()
-        except FileNotFoundError:
-            with open(self.config_file, "w") as f:
-                json.dump({"last_refresh": self.last_refresh}, f, indent=4)
-        except json.JSONDecodeError:
-            with open(self.config_file, "w") as f:
-                json.dump({"last_refresh": self.last_refresh}, f, indent=4)
-
-    async def refresh_data(self):
-        """
-        Refresh item and price data from the API if the file is outdated or missing.
-        
-        Data is refreshed if the last refresh time is older than 60 minutes or if files do not exist.
-        """
-        if not os.path.exists(self.prices_file) or time.time() - self.last_refresh > self.update_interval:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f"{self.api_url}/items", headers=self.get_headers()) as items_response:
-                    async with session.get(f"{self.api_url}/prices", headers=self.get_headers()) as prices_response:
-                        if items_response.status == 200 and prices_response.status == 200:
-                            items = await items_response.json()
-                            prices = await prices_response.json()
-                            os.makedirs(os.path.dirname(self.items_file), exist_ok=True)
-                            
-                            with open(self.items_file, "w") as f:
-                                json.dump(items, f)
-                            
-                            with open(self.prices_file, "w") as f:
-                                json.dump(prices, f)
-                            
-                            self.last_refresh = time.time()
-                            self.save_last_refresh_time()
-                            print("Refreshed data/items.json and data/prices.json")
-                        else:
-                            print(f"Failed to refresh data: items status {items_response.status}, prices status {prices_response.status}")
 
     def levenshtein_distance(self, s1: str, s2: str) -> int:
         """
@@ -189,20 +133,128 @@ class MarketCog(commands.Cog):
         
         return closest_match
 
+    def generate_price_history_graph(self, item_name: str, prices_dir: str) -> io.BytesIO:
+        """
+        Generate a graph showing the price history for the given item over the past 30 days.
+        
+        Args:
+            item_name (str): The name of the item to generate the price history for.
+            prices_dir (str): The directory containing the daily price JSON files.
+            
+        Returns:
+            io.BytesIO: The graph image as a file-like object.
+        """
+        # Prepare to collect price data
+        buy_prices = []
+        sell_prices = []
+        dates = []
+
+        # Get the date for the current day and the date for 30 days ago
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=30)
+
+        # Loop through the past 30 days and collect prices
+        current_date = end_date
+        while current_date >= start_date:
+            date_str = current_date.strftime("%d-%m-%Y")
+            price_file = os.path.join(prices_dir, f"{date_str}.json")
+
+            if os.path.exists(price_file):
+                with open(price_file, "r") as f:
+                    daily_prices = json.load(f)
+                    for category, items in daily_prices.items():
+                        if item_name in items:
+                            for price_info in items[item_name]:
+                                if price_info['orderSide'] == 'BUY':
+                                    buy_prices.append((date_str, price_info['price']))
+                                elif price_info['orderSide'] == 'SELL':
+                                    sell_prices.append((date_str, price_info['price']))
+            
+            current_date -= timedelta(days=1)
+        
+        # Sort prices by date
+        buy_prices.sort(key=lambda x: x[0])
+        sell_prices.sort(key=lambda x: x[0])
+
+        dates = [date for date, _ in buy_prices]
+        buy_values = [price for _, price in buy_prices]
+        sell_values = [price for _, price in sell_prices]
+
+        # Plotting the graph
+        plt.figure(figsize=(10, 6))
+        plt.plot(dates, buy_values, label='Kaufpreis', color='blue', marker='o')
+        plt.plot(dates, sell_values, label='Verkaufspreis', color='red', marker='o')
+        plt.xlabel('Datum')
+        plt.ylabel('Preis')
+        # Format item name for the title
+        formatted_item_name = self.format_item_name(item_name)
+        plt.title(f'Preisverlauf für {formatted_item_name}', color='white')
+        plt.legend()
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Format y-axis labels
+        def format_func(value, tick_number):
+            if value >= 1_000_000:
+                return f'{value/1_000_000:.0f}M'
+            elif value >= 1_000:
+                return f'{value/1_000:.0f}K'
+            else:
+                return f'{value:.0f}'
+
+        plt.gca().yaxis.set_major_formatter(ticker.FuncFormatter(format_func))
+
+        # Set the background color to be transparent
+        plt.gcf().patch.set_facecolor('none')
+        plt.gca().set_facecolor('none')
+        plt.gca().spines['top'].set_visible(False)
+        plt.gca().spines['right'].set_visible(False)
+        plt.gca().spines['left'].set_color('white')
+        plt.gca().spines['bottom'].set_color('white')
+        plt.gca().yaxis.label.set_color('white')
+        plt.gca().xaxis.label.set_color('white')
+        plt.gca().tick_params(axis='both', colors='white')
+        plt.grid(True, linestyle='--', alpha=0.5, color='white')
+
+        # Save the plot to a BytesIO object
+        image_stream = io.BytesIO()
+        plt.savefig(image_stream, format='png', bbox_inches='tight', transparent=True)
+        image_stream.seek(0)
+        plt.close()
+
+        return image_stream
+
     def format_item_name(self, item_name: str) -> str:
         """Format item names for display, capitalizing each word."""
-        return ' '.join(word.capitalize() for word in item_name.replace('_', ' ').split())
+        return ' '.join(word.capitalize() for word in item_name.split('_'))
 
     def get_item_image_url(self, item_name: str) -> str:
         """Generate the URL for the item image."""
         formatted_name = item_name.lower().replace(' ', '_')
         return f"https://mc.nerothe.com/img/1.21/minecraft_{formatted_name}.png"
 
-    def format_price(self, price: float) -> str:
-        """Format a price with thousand separators and currency symbol."""
-        rounded_price = round(price, 1)
-        formatted_price = f"{rounded_price:,.1f}".replace(',', ' ').replace('.', ',').replace(' ', '.')
-        return  "$ " + formatted_price
+    def format_price(self, price: int) -> str:
+        """Format price with thousand separators."""
+        return f"{price:,}".replace(",", ".") + " Coins"
+
+    async def get_price(self, item_name: str) -> dict[str, int]:
+        """
+        Get the buy and sell prices for a specific item from the local 'prices.json' file.
+        
+        Args:
+            item_name (str): The item name to search for prices.
+        
+        Returns:
+            dict[str, int]: A dictionary containing buy and sell prices.
+        """
+        try:
+            with open(self.prices_file, "r") as f:
+                prices_data = json.load(f)
+            for category, items in prices_data.items():
+                if item_name in items:
+                    return items[item_name]
+        except FileNotFoundError:
+            return {"buy": 0, "sell": 0}
 
     @app_commands.command(name="price", description="Get the price for an item")
     async def fetch_price(self, interaction: discord.Interaction, item_name: str):
@@ -213,7 +265,6 @@ class MarketCog(commands.Cog):
             interaction (discord.Interaction): The interaction object for the command.
             item_name (str): The name of the item to fetch the price for.
         """
-        await self.refresh_data()
         
         # Load items and prices data
         with open(self.items_file, "r") as f:
@@ -242,9 +293,10 @@ class MarketCog(commands.Cog):
                     break  # Exit loop once the item is found
             
             if category_found:
-                embed = discord.Embed(title=item_name_formatted, description=f"**Kategorie**: {category_found}", color=embed_color)
+                embed = discord.Embed(title=item_name_formatted, description=f"**Kategorie**: {category_found}", color=self.embed_color)
             else:
-                embed = discord.Embed(title=item_name_formatted, description=f"**Kategorie**: NOT_FOUND", color=embed_color)
+                embed = discord.Embed(title=item_name_formatted, description=f"**Kategorie**: NOT_FOUND", color=self.embed_color)
+            
             embed.set_thumbnail(url=item_image_url)
 
             if buy_price is not None:
@@ -257,9 +309,15 @@ class MarketCog(commands.Cog):
             else:
                 embed.add_field(name="Verkaufspreis", value="Nicht verfügbar", inline=True)
 
+            # Generate price history graph and add it to the embed
+            prices_dir = 'data/prices'
+            graph_image = self.generate_price_history_graph(best_match, prices_dir)
+            file = discord.File(fp=graph_image, filename='price_history.png')
+            embed.set_image(url="attachment://price_history.png")
+            
             embed.set_footer(text=f"{config['name']} • JinglingJester")
 
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed, file=file)
         else:
             await interaction.response.send_message("Kein passender Item gefunden.")
 
