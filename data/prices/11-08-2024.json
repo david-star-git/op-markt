@@ -4,11 +4,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 11,
-                "price": 26.0
+                "price": 30.0
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 6,
+                "activeOrders": 4,
                 "price": 3.5
             }
         ],
@@ -16,24 +16,24 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 5,
-                "price": 3.2
+                "price": 3.7
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 68,
+                "activeOrders": 65,
                 "price": 0.8
             }
         ],
         "BIRCH_LOG": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 1,
-                "price": 8.0
+                "activeOrders": 3,
+                "price": 9.6
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 54,
-                "price": 0.8
+                "activeOrders": 45,
+                "price": 1.0
             }
         ],
         "CHERRY_LOG": [
@@ -99,8 +99,8 @@
         "OAK_LOG": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 11,
-                "price": 42.0
+                "activeOrders": 9,
+                "price": 45.5
             },
             {
                 "orderSide": "SELL",
@@ -111,13 +111,13 @@
         "SPRUCE_LOG": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 13,
-                "price": 5.0
+                "activeOrders": 14,
+                "price": 5.2
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 92,
-                "price": 3.0
+                "activeOrders": 91,
+                "price": 3.1
             }
         ],
         "WARPED_STEM": [
@@ -162,11 +162,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 12,
-                "price": 18.0
+                "price": 17.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 21,
+                "activeOrders": 22,
                 "price": 2.6
             }
         ],
@@ -178,7 +178,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 21,
+                "activeOrders": 20,
                 "price": 40.0
             }
         ],
@@ -209,109 +209,109 @@
         "DIAMOND": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 66,
-                "price": 78.0
+                "activeOrders": 65,
+                "price": 77.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 42,
+                "activeOrders": 43,
                 "price": 50.5
             }
         ],
         "DIAMOND_BLOCK": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 24,
-                "price": 739.5
+                "activeOrders": 23,
+                "price": 739.4
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 28,
-                "price": 518.4
+                "activeOrders": 27,
+                "price": 518.3
             }
         ],
         "EMERALD": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 15,
+                "activeOrders": 16,
                 "price": 54.9
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 62,
-                "price": 50.0
+                "price": 50.1
             }
         ],
         "EMERALD_BLOCK": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 16,
-                "price": 578.3
+                "activeOrders": 14,
+                "price": 578.2
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 26,
-                "price": 403.0
+                "price": 403.2
             }
         ],
         "GOLD_BLOCK": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 18,
+                "activeOrders": 19,
                 "price": 174.8
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 47,
-                "price": 111.7
+                "price": 111.8
             }
         ],
         "GOLD_INGOT": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 13,
-                "price": 28.8
+                "activeOrders": 12,
+                "price": 28.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 26,
-                "price": 12.2
+                "activeOrders": 25,
+                "price": 12.3
             }
         ],
         "IRON_BLOCK": [
             {
                 "orderSide": "BUY",
                 "activeOrders": 18,
-                "price": 155.7
+                "price": 155.8
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 50,
+                "activeOrders": 49,
                 "price": 105.0
             }
         ],
         "IRON_INGOT": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 40,
-                "price": 19.5
+                "activeOrders": 39,
+                "price": 19.4
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 74,
+                "activeOrders": 75,
                 "price": 9.3
             }
         ],
         "LAPIS_BLOCK": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 8,
+                "activeOrders": 9,
                 "price": 12.8
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 45,
-                "price": 1.1
+                "activeOrders": 44,
+                "price": 1.2
             }
         ],
         "LAPIS_LAZULI": [
@@ -336,13 +336,13 @@
         "NETHERITE_INGOT": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 40,
+                "activeOrders": 39,
                 "price": 2718.0
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 16,
-                "price": 1969.8
+                "activeOrders": 17,
+                "price": 1969.9
             }
         ],
         "QUARTZ": [
@@ -353,7 +353,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 44,
+                "activeOrders": 42,
                 "price": 17.4
             }
         ],
@@ -397,11 +397,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 1,
-                "price": 4.8
+                "price": 4.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 63,
+                "activeOrders": 62,
                 "price": 0.8
             }
         ],
@@ -413,7 +413,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 41,
+                "activeOrders": 40,
                 "price": 6.4
             }
         ]
@@ -862,24 +862,24 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 3,
-                "price": 7.7
+                "price": 7.8
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 90,
+                "activeOrders": 89,
                 "price": 0.9
             }
         ],
         "GRAVEL": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 10,
-                "price": 9.7
+                "activeOrders": 11,
+                "price": 9.8
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 43,
-                "price": 1.9
+                "activeOrders": 42,
+                "price": 2.0
             }
         ],
         "GRAY_CONCRETE": [
@@ -1614,12 +1614,12 @@
         "QUARTZ_BLOCK": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 19,
-                "price": 108.6
+                "activeOrders": 18,
+                "price": 105.1
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 57,
+                "activeOrders": 61,
                 "price": 76.5
             }
         ],
@@ -1727,14 +1727,14 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 141,
+                "activeOrders": 140,
                 "price": 2.1
             }
         ],
         "SANDSTONE": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 3,
+                "activeOrders": 2,
                 "price": 14.6
             },
             {
@@ -1807,7 +1807,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 0,
-                "price": 0.8
+                "price": 1.4
             }
         ],
         "TERRACOTTA": [
@@ -1921,13 +1921,13 @@
         "WHITE_WOOL": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 10,
+                "activeOrders": 9,
                 "price": 19.7
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 230,
-                "price": 6.3
+                "price": 6.2
             }
         ],
         "YELLOW_CONCRETE": [
@@ -1995,13 +1995,13 @@
         "APPLE": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 18,
+                "activeOrders": 19,
                 "price": 48.9
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 22,
-                "price": 15.1
+                "price": 15.2
             }
         ],
         "BEEF": [
@@ -2032,11 +2032,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 10,
-                "price": 29.5
+                "price": 1.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 35,
+                "activeOrders": 37,
                 "price": 1.2
             }
         ],
@@ -2075,7 +2075,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 0,
-                "price": 1.2
+                "price": 1.1
             }
         ],
         "COOKIE": [
@@ -2093,12 +2093,7 @@
         "DRIED_KELP": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 1,
-                "price": 12.4
-            },
-            {
-                "orderSide": "SELL",
-                "activeOrders": 15,
+                "activeOrders": 0,
                 "price": 1.0
             }
         ],
@@ -2110,7 +2105,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 22,
+                "activeOrders": 21,
                 "price": 150.2
             }
         ],
@@ -2206,11 +2201,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 6,
-                "price": 3.6
+                "price": 3.5
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 16,
+                "activeOrders": 17,
                 "price": 1.4
             }
         ],
@@ -2251,24 +2246,24 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 5,
-                "price": 8.8
+                "price": 8.7
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 55,
+                "activeOrders": 56,
                 "price": 2.0
             }
         ],
         "BONE": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 18,
+                "activeOrders": 17,
                 "price": 8.9
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 57,
-                "price": 3.3
+                "price": 3.2
             }
         ],
         "EGG": [
@@ -2370,13 +2365,13 @@
         "LEATHER": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 8,
+                "activeOrders": 9,
                 "price": 7.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 215,
-                "price": 1.8
+                "activeOrders": 214,
+                "price": 1.9
             }
         ],
         "MAGMA_CREAM": [
@@ -2394,32 +2389,37 @@
         "PHANTOM_MEMBRANE": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 2,
+                "activeOrders": 3,
                 "price": 34.5
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 14,
-                "price": 1.0
+                "price": 1.1
             }
         ],
         "RABBIT_FOOT": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 10,
+                "activeOrders": 11,
                 "price": 54.5
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 24,
-                "price": 6.2
+                "price": 6.3
             }
         ],
         "RABBIT_HIDE": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 0,
+                "activeOrders": 1,
                 "price": 1.7
+            },
+            {
+                "orderSide": "SELL",
+                "activeOrders": 38,
+                "price": 0.8
             }
         ],
         "ROTTEN_FLESH": [
@@ -2481,11 +2481,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 11,
-                "price": 999.7
+                "price": 900.0
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 5,
+                "activeOrders": 4,
                 "price": 300.1
             }
         ]
@@ -2494,7 +2494,7 @@
         "BEACON": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 55,
+                "activeOrders": 52,
                 "price": 739999.7
             },
             {
@@ -2549,13 +2549,13 @@
         "DRAGON_EGG": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 35,
-                "price": 424999.2
+                "activeOrders": 34,
+                "price": 424999.1
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 8,
-                "price": 200002.6
+                "activeOrders": 7,
+                "price": 200002.5
             }
         ],
         "DRAGON_HEAD": [
@@ -2566,43 +2566,43 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 12,
+                "activeOrders": 11,
                 "price": 1117.8
             }
         ],
         "ELYTRA": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 84,
-                "price": 91734.1
+                "activeOrders": 83,
+                "price": 91733.6
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 24,
+                "activeOrders": 25,
                 "price": 52089.1
             }
         ],
         "ENCHANTED_GOLDEN_APPLE": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 15,
-                "price": 4999.8
+                "activeOrders": 14,
+                "price": 4799.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 25,
-                "price": 3001.1
+                "activeOrders": 26,
+                "price": 3000.7
             }
         ],
         "EXPERIENCE_BOTTLE": [
             {
                 "orderSide": "BUY",
                 "activeOrders": 17,
-                "price": 346.3
+                "price": 346.2
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 30,
+                "activeOrders": 29,
                 "price": 203.7
             }
         ],
@@ -2634,11 +2634,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 12,
-                "price": 550.2
+                "price": 550.0
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 17,
+                "activeOrders": 18,
                 "price": 50.5
             }
         ],
@@ -2681,7 +2681,7 @@
         "SHULKER_BOX": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 24,
+                "activeOrders": 23,
                 "price": 224400.0
             },
             {
@@ -2723,7 +2723,7 @@
             {
                 "orderSide": "SELL",
                 "activeOrders": 5,
-                "price": 11500000.3
+                "price": 11500000.4
             }
         ],
         "SPIDER_SPAWN_EGG": [
@@ -2753,8 +2753,8 @@
         "TOTEM_OF_UNDYING": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 19,
-                "price": 190996.6
+                "activeOrders": 18,
+                "price": 190996.4
             },
             {
                 "orderSide": "SELL",

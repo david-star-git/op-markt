@@ -190,6 +190,7 @@ The OP-Markt Bot includes a price history graph feature that provides visual ins
 - [x] Add graph to show item price changes.
 - [ ] Add support for german itemnames.
 - [x] Translate to german.
+- [ ] Add tab completion to `/price` command.
 - [ ] Keep it efficient.
 - [ ] KISS
 
