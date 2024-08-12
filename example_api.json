@@ -1,5 +1,6 @@
 {
     "TOKEN": "DISCORD BOT TOKEN",
     "API-KEY": "OPSCHT API KEY",
-    "API-UNAME": "OPSUCHT API USERNAME"
+    "API-UNAME": "OPSUCHT API USERNAME",
+    "API_URL": "https://api.opsucht.net/market"
 }
