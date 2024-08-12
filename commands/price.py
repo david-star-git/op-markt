@@ -12,20 +12,22 @@ import matplotlib.ticker as ticker
 from datetime import datetime, timedelta
 import pandas as pd
 import io
+from datetime import datetime as dt
 
 # Retrieve the current file path and name
 current_file_path = __file__
 current_file_name = os.path.basename(current_file_path)
 
 # Load configuration from 'data/config.json'
+current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
 try:
     with open('data/config.json') as file:
         config = json.load(file)
-        print(f"Successfully loaded config.json in {current_file_name}")
+        print(f"[{current_time}] Successfully loaded config.json in {current_file_name}")
 except FileNotFoundError:
-    print(f"File not found in {current_file_name}.")
+    print(f"[{current_time}] File not found in {current_file_name}.")
 except json.JSONDecodeError:
-    print(f"Invalid JSON format in {current_file_name}")
+    print(f"[{current_time}] Invalid JSON format in {current_file_name}")
 
 class MarketCog(commands.Cog):
     def __init__(self, bot):

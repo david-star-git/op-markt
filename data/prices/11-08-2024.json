@@ -112,11 +112,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 11,
-                "price": 5.3
+                "price": 5.0
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 102,
+                "activeOrders": 103,
                 "price": 2.4
             }
         ],
@@ -210,11 +210,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 66,
-                "price": 79.5
+                "price": 79.6
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 41,
+                "activeOrders": 40,
                 "price": 50.5
             }
         ],
@@ -222,11 +222,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 26,
-                "price": 738.0
+                "price": 737.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 33,
+                "activeOrders": 34,
                 "price": 530.2
             }
         ],
@@ -258,7 +258,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 19,
-                "price": 174.4
+                "price": 174.3
             },
             {
                 "orderSide": "SELL",
@@ -270,11 +270,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 12,
-                "price": 28.7
+                "price": 28.8
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 27,
+                "activeOrders": 26,
                 "price": 12.6
             }
         ],
@@ -325,7 +325,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 33,
-                "price": 27098.1
+                "price": 27098.0
             },
             {
                 "orderSide": "SELL",
@@ -337,11 +337,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 34,
-                "price": 2717.5
+                "price": 2717.4
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 19,
+                "activeOrders": 20,
                 "price": 1969.4
             }
         ],
@@ -699,11 +699,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 19,
-                "price": 389.7
+                "price": 475.0
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 22,
+                "activeOrders": 9,
                 "price": 114.2
             }
         ],
@@ -727,7 +727,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 6,
+                "activeOrders": 5,
                 "price": 5.0
             }
         ],
@@ -763,7 +763,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 30,
+                "activeOrders": 32,
                 "price": 5.6
             }
         ],
@@ -1046,7 +1046,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 6,
+                "activeOrders": 5,
                 "price": 1.0
             }
         ],
@@ -1166,7 +1166,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 5,
+                "activeOrders": 4,
                 "price": 2.5
             }
         ],
@@ -1226,7 +1226,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 9,
+                "activeOrders": 8,
                 "price": 1.1
             }
         ],
@@ -1282,7 +1282,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 0,
-                "price": 4.5
+                "price": 4.4
             }
         ],
         "MUD": [
@@ -1384,7 +1384,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 5,
+                "activeOrders": 4,
                 "price": 2.5
             }
         ],
@@ -1456,7 +1456,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 19,
+                "activeOrders": 18,
                 "price": 5.0
             }
         ],
@@ -1559,7 +1559,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 8,
+                "activeOrders": 6,
                 "price": 1.0
             }
         ],
@@ -1614,13 +1614,13 @@
         "QUARTZ_BLOCK": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 20,
+                "activeOrders": 19,
                 "price": 104.5
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 70,
-                "price": 76.7
+                "price": 76.6
             }
         ],
         "RED_CONCRETE": [
@@ -1874,11 +1874,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 7,
-                "price": 69.0
+                "price": 50.0
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 85,
+                "activeOrders": 86,
                 "price": 11.3
             }
         ],
@@ -1938,7 +1938,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 18,
+                "activeOrders": 16,
                 "price": 13.2
             }
         ],
@@ -1950,7 +1950,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 5,
+                "activeOrders": 4,
                 "price": 2.5
             }
         ],
@@ -2056,7 +2056,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 0,
-                "price": 8.7
+                "price": 8.9
             }
         ],
         "CHICKEN": [
@@ -2101,7 +2101,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 17,
-                "price": 283.7
+                "price": 283.6
             },
             {
                 "orderSide": "SELL",
@@ -2163,7 +2163,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 0,
-                "price": 8.9
+                "price": 10.0
             }
         ],
         "PUMPKIN": [
@@ -2281,13 +2281,13 @@
         "ENDER_PEARL": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 12,
+                "activeOrders": 9,
                 "price": 24.4
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 297,
-                "price": 2.7
+                "price": 2.6
             }
         ],
         "FEATHER": [
@@ -2468,7 +2468,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 40,
+                "activeOrders": 39,
                 "price": 3.3
             }
         ],
@@ -2490,11 +2490,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 53,
-                "price": 739999.1
+                "price": 739999.0
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 13,
+                "activeOrders": 14,
                 "price": 602254.7
             }
         ],
@@ -2549,25 +2549,25 @@
         "DRAGON_EGG": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 29,
-                "price": 379999.6
+                "activeOrders": 30,
+                "price": 379999.5
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 11,
-                "price": 200000.7
+                "price": 200000.8
             }
         ],
         "DRAGON_HEAD": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 6,
+                "activeOrders": 7,
                 "price": 2399.7
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 10,
-                "price": 1117.9
+                "price": 1118.0
             }
         ],
         "ELYTRA": [
@@ -2585,13 +2585,13 @@
         "ENCHANTED_GOLDEN_APPLE": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 15,
-                "price": 4499.5
+                "activeOrders": 13,
+                "price": 4499.4
             },
             {
                 "orderSide": "SELL",
                 "activeOrders": 27,
-                "price": 3000.5
+                "price": 3000.1
             }
         ],
         "EXPERIENCE_BOTTLE": [
@@ -2602,7 +2602,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 33,
+                "activeOrders": 32,
                 "price": 203.9
             }
         ],
@@ -2682,11 +2682,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 22,
-                "price": 224399.8
+                "price": 224399.6
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 9,
+                "activeOrders": 10,
                 "price": 177000.2
             }
         ],
@@ -2717,7 +2717,7 @@
         "SPAWNER": [
             {
                 "orderSide": "BUY",
-                "activeOrders": 80,
+                "activeOrders": 79,
                 "price": 14250000.0
             },
             {
@@ -2754,7 +2754,7 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 18,
-                "price": 190996.7
+                "price": 190996.6
             },
             {
                 "orderSide": "SELL",

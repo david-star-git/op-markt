@@ -9,6 +9,9 @@ The OP-Markt Bot is a versatile tool designed to enhance the Minecraft experienc
 - **Price Retrieval**: Fetches and displays item prices from the Opsucht server’s market.
 - **Fuzzy Matching**: Utilizes a sophisticated algorithm to find the closest matching items based on user input.
 - **Embed Responses**: Provides formatted and visually appealing responses, including item images and price details.
+- **Reputation Tracking**: Allows users to view the reputation of a Minecraft player based on their UUID.
+- **Reputation Stats**: Enables administrators to view how many positive and negative reputations a user has given.
+- **Reputation Management**: Users can give positive or negative reputation to a Minecraft player, tracked by their UUID.
 
 ## Getting Started
 
@@ -35,7 +38,7 @@ The OP-Markt Bot is a versatile tool designed to enhance the Minecraft experienc
 
 #### Install Dependencies
 
-Install the required dependencies: `pip install discord.py aiohttp matplotlib pandas`
+Install the required dependencies: `pip install discord.py aiohttp matplotlib pandas aiosqlite`
 
 #### Configure API Credentials
 
@@ -84,6 +87,49 @@ The bot will provide an embed message with:
 - Buy Price
 - Sell Price
 - Item Image
+
+### `/view_rep <username>`
+
+Displays the reputation of a specified Minecraft player. The bot retrieves the player's UUID and shows positive, negative, and overall reputation in an embed.
+
+**Example Usage:**
+
+- Command: `/view_rep Notch`
+
+**Response:**
+
+The bot will provide an embed message with:
+- Player Name
+- Positive Reputations
+- Negative Reputations
+- Overall Reputation
+- Player's Avatar Image
+
+### `/stats <user>`
+
+Allows users to check the reputation stats of a specified Discord user. The bot will display how many positive and negative reputations the user has given.
+
+**Example Usage:**
+
+- Command: `/stats @Steve`
+
+**Response:**
+
+The bot will provide a message with:
+- Positive Reputations Given
+- Negative Reputations Given
+
+### `/give_rep <username> <type>`
+
+Users can give positive or negative reputation to a Minecraft player. The bot checks the player’s UUID and adds the reputation to the database.
+
+**Example Usage:**
+
+- Command: `/give_rep Notch positive`
+
+**Response:**
+
+The bot will confirm the action by replying with a message, indicating the reputation has been added to the player.
 
 ## Fuzzy Matching Algorithm
 
@@ -184,6 +230,15 @@ The OP-Markt Bot includes a price history graph feature that provides visual ins
 
 You need to install `matplotlib` and `pandas` for the price graph to work.
 
+- **Reputation System**: The bot now includes a reputation tracking system for Minecraft players. Users can give positive or negative reputation to a player based on their Minecraft UUID. The bot keeps track of reputations and allows users to view the overall reputation of any player using the `/view_rep` command. Additionally, users can check the reputation stats of a Discord user to see how many positive and negative reputations they have given using the `/stats` command.
+
+You need to install `aiosqlite` so you the bot can create and acces the database.
+
+- **Reputation Commands**:
+  - **/view_rep**: Displays the total positive, negative, and overall reputation for a Minecraft player, complete with their avatar image.
+  - **/give_rep**: Allows users to give a positive or negative reputation to a Minecraft player. This command ensures that each user can only give reputation to another player once.
+  - **/stats**: Enables users to check how many positive and negative reputations a Discord user has given.
+
 ## TODO
 
 - [x] Add image to embed.
@@ -193,6 +248,7 @@ You need to install `matplotlib` and `pandas` for the price graph to work.
 - [ ] Add support for german itemnames.
 - [x] Translate to german.
 - [ ] Add tab completion to `/price` command.
+- [x] Add a reputation system.
 - [ ] Keep it efficient.
 - [ ] KISS
 

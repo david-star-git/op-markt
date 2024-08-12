@@ -6,6 +6,7 @@ import aiohttp
 import base64
 from discord.ext import commands
 from datetime import datetime as dt, date
+import aiosqlite
 
 # Define bot intents for message content access
 intents = discord.Intents.default()
@@ -15,24 +16,26 @@ intents.message_content = True
 client = commands.Bot(command_prefix="!", intents=intents)
 
 # Load configuration from 'data/config.json'
+current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
 try:
     with open('data/config.json') as file:
         config = json.load(file)
-        print(f"Successfully loaded config.json in {os.path.basename(__file__)}")
+        print(f"[{current_time}] Successfully loaded config.json in {os.path.basename(__file__)}")
 except FileNotFoundError:
-    print(f"File not found in {os.path.basename(__file__)}.")
+    print(f"[{current_time}] File not found in {os.path.basename(__file__)}.")
 except json.JSONDecodeError:
-    print(f"Invalid JSON format in {os.path.basename(__file__)}")
+    print(f"[{current_time}] Invalid JSON format in {os.path.basename(__file__)}")
 
 # Load API credentials from 'api.json'
+current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
 try:
     with open('api.json') as file:
         api = json.load(file)
-        print(f"Successfully loaded api.json in {os.path.basename(__file__)}")
+        print(f"[{current_time}] Successfully loaded api.json in {os.path.basename(__file__)}")
 except FileNotFoundError:
-    print(f"File not found in {os.path.basename(__file__)}.")
+    print(f"[{current_time}] File not found in {os.path.basename(__file__)}.")
 except json.JSONDecodeError:
-    print(f"Invalid JSON format in {os.path.basename(__file__)}")
+    print(f"[{current_time}] Invalid JSON format in {os.path.basename(__file__)}")
 
 def get_headers():
     """Generate headers for API requests with Basic Auth."""
@@ -135,11 +138,27 @@ async def load_cogs():
             except Exception as e:
                 print(f"[{current_time}] Failed to load {cog_name}: {e}")
 
+# Initialize the database
+async def init_db():
+    async with aiosqlite.connect("data/reputation.db") as db:
+        await db.execute("""CREATE TABLE IF NOT EXISTS reputation (
+                            id INTEGER PRIMARY KEY,
+                            giver_id TEXT NOT NULL,
+                            receiver_uuid TEXT NOT NULL,
+                            reputation INTEGER NOT NULL,
+                            UNIQUE(giver_id, receiver_uuid))""")
+        await db.execute("""CREATE TABLE IF NOT EXISTS users (
+                            id INTEGER PRIMARY KEY,
+                            uuid TEXT NOT NULL,
+                            username TEXT NOT NULL)""")
+        await db.commit()
+
 @client.event
 async def on_ready():
     """Triggered when the bot has successfully connected to Discord."""
     current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
-    await load_cogs()  # Load the MarketCog
+    await init_db()
+    await load_cogs()  # Load the Cogs
     print(f"[{current_time}] Logged in as {str(client.user)[:-5]} (ID: {client.user.id})")
     
     # Synchronize application commands
