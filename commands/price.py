@@ -147,9 +147,11 @@ class MarketCog(commands.Cog):
             io.BytesIO: The graph image as a file-like object.
         """
         # Prepare to collect price data
-        buy_prices = []
-        sell_prices = []
+        buy_prices = {}
+        sell_prices = {}
         dates = []
+        buy_values = []
+        sell_values = []
 
         # Get the date for the current day and the date for 30 days ago
         end_date = datetime.now()
@@ -168,19 +170,18 @@ class MarketCog(commands.Cog):
                         if item_name in items:
                             for price_info in items[item_name]:
                                 if price_info['orderSide'] == 'BUY':
-                                    buy_prices.append((date_str, price_info['price']))
+                                    buy_prices[date_str] = price_info['price']
                                 elif price_info['orderSide'] == 'SELL':
-                                    sell_prices.append((date_str, price_info['price']))
+                                    sell_prices[date_str] = price_info['price']
             
+            # Move to the previous day
             current_date -= timedelta(days=1)
         
-        # Sort prices by date
-        buy_prices.sort(key=lambda x: x[0])
-        sell_prices.sort(key=lambda x: x[0])
-
-        dates = [date for date, _ in buy_prices]
-        buy_values = [price for _, price in buy_prices]
-        sell_values = [price for _, price in sell_prices]
+        # Create buy and sell value lists, adding only dates where at least one price exists
+        for date in sorted(set(list(buy_prices.keys()) + list(sell_prices.keys()))):
+            dates.append(date)
+            buy_values.append(buy_prices.get(date, 0))
+            sell_values.append(sell_prices.get(date, 0))
 
         # Plotting the graph
         plt.figure(figsize=(10, 6))
@@ -188,6 +189,7 @@ class MarketCog(commands.Cog):
         plt.plot(dates, sell_values, label='Verkaufspreis', color='red', marker='o')
         plt.xlabel('Datum')
         plt.ylabel('Preis')
+        
         # Format item name for the title
         formatted_item_name = self.format_item_name(item_name)
         plt.title(f'Preisverlauf für {formatted_item_name}', color='white')

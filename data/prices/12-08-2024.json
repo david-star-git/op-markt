@@ -210,11 +210,11 @@
             {
                 "orderSide": "BUY",
                 "activeOrders": 67,
-                "price": 65.0
+                "price": 66.9
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 51,
+                "activeOrders": 50,
                 "price": 52.1
             }
         ],
@@ -1614,7 +1614,7 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 75,
+                "activeOrders": 74,
                 "price": 76.7
             }
         ],
