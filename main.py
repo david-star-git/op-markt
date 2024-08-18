@@ -66,9 +66,14 @@ async def fetch_market_data():
             # Fetch items data
             async with session.get("https://api.opsucht.net/market/items", headers=headers) as response:
                 items_data = await response.json()
+                
+                # Extract materials from the fetched items data
+                materials = [item["material"] for item in items_data]
+                
+                # Save materials to items.json
                 with open("data/items.json", "w") as f:
-                    json.dump(items_data, f, indent=4)
-                print(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S')}] Saved items to data/items.json")
+                    json.dump(materials, f, indent=4)
+                print(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S')}] Saved materials to data/items.json")
             
             # Fetch prices data
             async with session.get("https://api.opsucht.net/market/prices", headers=headers) as response:
