@@ -137,7 +137,7 @@ class MarketCog(commands.Cog):
 
     def generate_price_history_graph(self, item_name: str, prices_dir: str) -> io.BytesIO:
         """
-        Generate a graph showing the price history for the given item over the past 30 days.
+        Generate a graph showing the price history for the given item over the last 14 days.
         
         Args:
             item_name (str): The name of the item to generate the price history for.
@@ -149,17 +149,14 @@ class MarketCog(commands.Cog):
         # Prepare to collect price data
         buy_prices = {}
         sell_prices = {}
-        dates = []
-        buy_values = []
-        sell_values = []
 
-        # Get the date for the current day and the date for 30 days ago
+        # Get the date for the current day and the date for 14 days ago
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=30)
+        start_date = end_date - timedelta(days=13)  # Adjust to include the last 14 days
 
-        # Loop through the past 30 days and collect prices
-        current_date = end_date
-        while current_date >= start_date:
+        # Loop through the last 14 days and collect prices
+        current_date = start_date
+        while current_date <= end_date:
             date_str = current_date.strftime("%d-%m-%Y")
             price_file = os.path.join(prices_dir, f"{date_str}.json")
 
@@ -173,29 +170,35 @@ class MarketCog(commands.Cog):
                                     buy_prices[date_str] = price_info['price']
                                 elif price_info['orderSide'] == 'SELL':
                                     sell_prices[date_str] = price_info['price']
-            
-            # Move to the previous day
-            current_date -= timedelta(days=1)
-        
-        # Create buy and sell value lists, adding only dates where at least one price exists
-        for date in sorted(set(list(buy_prices.keys()) + list(sell_prices.keys()))):
-            dates.append(date)
-            buy_values.append(buy_prices.get(date, 0))
-            sell_values.append(sell_prices.get(date, 0))
+
+            # Move to the next day
+            current_date += timedelta(days=1)
+
+        # Create a list of all dates in the range
+        dates = [start_date + timedelta(days=i) for i in range(14)]  # Last 14 days
+        dates_str = [date.strftime("%d-%m-%Y") for date in dates]
+
+        # Prepare buy and sell values with default 0 if no price data is available
+        buy_values = [buy_prices.get(date_str, 0) for date_str in dates_str]
+        sell_values = [sell_prices.get(date_str, 0) for date_str in dates_str]
 
         # Plotting the graph
-        plt.figure(figsize=(10, 6))
-        plt.plot(dates, buy_values, label='Kaufpreis', color='blue', marker='o')
-        plt.plot(dates, sell_values, label='Verkaufspreis', color='red', marker='o')
+        plt.figure(figsize=(12, 6))
+        plt.plot(dates, buy_values, label='Kaufpreis', color='blue', marker='o', linestyle='-')
+        plt.plot(dates, sell_values, label='Verkaufspreis', color='red', marker='o', linestyle='-')
         plt.xlabel('Datum')
         plt.ylabel('Preis')
-        
+
         # Format item name for the title
         formatted_item_name = self.format_item_name(item_name)
         plt.title(f'Preisverlauf für {formatted_item_name}', color='white')
         plt.legend()
-        plt.xticks(rotation=45)
-        plt.tight_layout()
+
+        # Format x-axis to show all dates in the range
+        plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d-%m-%Y'))
+        plt.gca().set_xticks(dates)  # Ensure ticks match all dates
+        plt.gcf().autofmt_xdate()  # Automatically format dates on x-axis
 
         # Format y-axis labels
         def format_func(value, tick_number):

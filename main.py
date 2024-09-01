@@ -109,12 +109,12 @@ async def save_daily_prices():
             print(f"[{current_time}] Error saving daily prices: {e}")
 
 async def cleanup_old_files():
-    """Delete files older than 30 days."""
+    """Delete files older than 14 days."""
     today = date.today()
     for filename in os.listdir("data/prices"):
         if filename.endswith(".json"):
             file_date = dt.strptime(filename[:-5], "%d-%m-%Y").date()
-            if (today - file_date).days > 30:
+            if (today - file_date).days > 14:
                 os.remove(os.path.join("data/prices", filename))
                 current_time = dt.now().strftime("%Y-%m-%d %H:%M:%S")
                 print(f"[{current_time}] Deleted old file: {filename}")
