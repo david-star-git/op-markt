@@ -7,6 +7,7 @@ import base64
 from discord.ext import commands
 from datetime import datetime as dt, date
 import aiosqlite
+import unicodedata
 
 # Define bot intents for message content access
 intents = discord.Intents.default()
@@ -57,9 +58,23 @@ async def fetch_api_data(url):
                 print(f"[{current_time}] Failed to fetch data from {url}: {response.status}")
                 return None
 
+def format_item_name(item_name: str) -> str:
+    """Convert item names from UPPERCASE_UNDERSCORE format to Title Case format for translation lookup."""
+    # Replace underscores with spaces and convert to title case
+    return item_name.replace('_', ' ').title()
+
+def normalize_string(s: str) -> str:
+    """Normalize strings by removing accents and special characters for comparison."""
+    return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode('utf-8').lower()
+
+
 async def fetch_market_data():
-    """Fetch market data from the API and save it to items.json and prices.json."""
+    """Fetch market data from the API and save it to items.json (with translations) and prices.json."""
     headers = get_headers()
+
+    # Load translations from data/translations.json
+    with open("data/translations.json", "r", encoding='utf-8') as f:
+        translations = json.load(f)
     
     async with aiohttp.ClientSession() as session:
         try:
@@ -67,19 +82,42 @@ async def fetch_market_data():
             async with session.get("https://api.opsucht.net/market/items", headers=headers) as response:
                 items_data = await response.json()
                 
-                # Extract materials from the fetched items data
-                materials = [item["material"] for item in items_data]
+                # Create a dictionary of translated materials using translations.json
+                translated_materials = {}
+                for item in items_data:
+                    english_name = item["material"]  # Original name in UPPERCASE_UNDERSCORE format
+                    formatted_name = format_item_name(english_name)  # Convert to Title Case with spaces
+                    
+                    # Normalize both the formatted name and translation keys for comparison
+                    normalized_formatted_name = normalize_string(formatted_name)
+                    
+                    # Try to find a translation by matching normalized strings
+                    german_name = None
+                    for key, value in translations.items():
+                        if normalize_string(key) == normalized_formatted_name:
+                            german_name = value
+                            break
+                    
+                    if german_name:
+                        # Use the German name if found in translations.json
+                        translated_materials[english_name] = german_name
+                    else:
+                        # Default to English name if no German translation exists
+                        #print(f"No German translation for: {english_name}")
+                        translated_materials[english_name] = english_name
                 
-                # Save materials to items.json
-                with open("data/items.json", "w") as f:
-                    json.dump(materials, f, indent=4)
-                print(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S')}] Saved materials to data/items.json")
+                # Save the translated materials to items.json
+                with open("data/items.json", "w", encoding='utf-8') as f:
+                    json.dump(translated_materials, f, indent=4, ensure_ascii=False)
+                print(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S')}] Saved translated materials to data/items.json")
             
             # Fetch prices data
             async with session.get("https://api.opsucht.net/market/prices", headers=headers) as response:
                 prices_data = await response.json()
-                with open("data/prices.json", "w") as f:
-                    json.dump(prices_data, f, indent=4)
+                
+                # Save the prices data to prices.json
+                with open("data/prices.json", "w", encoding='utf-8') as f:
+                    json.dump(prices_data, f, indent=4, ensure_ascii=False)
                 print(f"[{dt.now().strftime('%Y-%m-%d %H:%M:%S')}] Saved prices to data/prices.json")
                 
             return prices_data

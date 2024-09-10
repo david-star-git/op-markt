@@ -245,7 +245,7 @@ You need to install `aiosqlite` so you the bot can create and acces the database
 - [x] Write a markdown.
 - [x] Add categories.
 - [x] Add graph to show item price changes.
-- [ ] Add support for german itemnames.
+- [x] Add support for german itemnames.
 - [x] Translate to german.
 - [ ] Add tab completion to `/price` command.
 - [x] Add a reputation system.

@@ -96,55 +96,80 @@ class MarketCog(commands.Cog):
         
         return previous_row[-1]
 
-    def find_best_match(self, query: str, items: list[str]) -> str:
+    def find_best_match(self, query: str, items_dict: dict) -> tuple[str, str]:
         """
-        Find the best matching item from a list based on the query string using fuzzy matching.
-        
+        Find the best matching item from a dictionary of English and German names based on the query string.
+
+        First, it tries to find a substring match, and if multiple matches are found, it uses fuzzy matching to select the best one.
+        If no substring matches are found, it falls back to full fuzzy matching.
+
         Args:
             query (str): Query string to match.
-            items (list[str]): List of item names to search.
-        
+            items_dict (dict): Dictionary where keys are English names and values are German names.
+
         Returns:
-            str: The best matching item name.
+            tuple: The best matching English and German item names.
         """
         query = query.lower()
-        
-        # Find items that contain the query as a substring
-        containing_matches = [item for item in items if query in item.lower()]
-        
-        if containing_matches:
-            # Use Levenshtein distance to find the closest match among substring matches
-            closest_match = None
-            lowest_distance = float('inf')
-            
-            for item in containing_matches:
-                distance = self.levenshtein_distance(query, item.lower())
-                if distance < lowest_distance:
-                    closest_match = item
-                    lowest_distance = distance
-            
-            return closest_match
-        
-        # If no substring matches, use Levenshtein distance for fuzzy matching
-        closest_match = None
-        lowest_distance = float('inf')
-        
-        for item in items:
-            distance = self.levenshtein_distance(query, item.lower())
-            if distance < lowest_distance:
-                closest_match = item
-                lowest_distance = distance
-        
-        return closest_match
 
-    def generate_price_history_graph(self, item_name: str, prices_dir: str) -> io.BytesIO:
+        # First, perform a substring search on both English and German names
+        substring_matches = [(eng_name, ger_name) for eng_name, ger_name in items_dict.items()
+                            if query in eng_name.lower() or query in ger_name.lower()]
+
+        # If we have substring matches, use fuzzy matching to sort them
+        if substring_matches:
+            closest_match_eng = None
+            closest_match_ger = None
+            lowest_distance = float('inf')
+
+            for eng_name, ger_name in substring_matches:
+                distance_eng = self.levenshtein_distance(query, eng_name.lower())
+                distance_ger = self.levenshtein_distance(query, ger_name.lower())
+
+                # Prioritize the closest match between English and German
+                if distance_eng < lowest_distance:
+                    closest_match_eng = eng_name
+                    closest_match_ger = ger_name
+                    lowest_distance = distance_eng
+                if distance_ger < lowest_distance:
+                    closest_match_eng = eng_name
+                    closest_match_ger = ger_name
+                    lowest_distance = distance_ger
+
+            return closest_match_eng, closest_match_ger
+
+        # If no substring matches, fall back to full fuzzy matching
+        closest_match_eng = None
+        closest_match_ger = None
+        lowest_distance = float('inf')
+
+        for eng_name, ger_name in items_dict.items():
+            distance_eng = self.levenshtein_distance(query, eng_name.lower())
+            distance_ger = self.levenshtein_distance(query, ger_name.lower())
+
+            # Prioritize the closest match between English and German
+            if distance_eng < distance_ger:
+                if distance_eng < lowest_distance:
+                    closest_match_eng = eng_name
+                    closest_match_ger = ger_name
+                    lowest_distance = distance_eng
+            else:
+                if distance_ger < lowest_distance:
+                    closest_match_eng = eng_name
+                    closest_match_ger = ger_name
+                    lowest_distance = distance_ger
+
+        return closest_match_eng, closest_match_ger
+
+    def generate_price_history_graph(self, item_name_eng: str, item_name_display: str, prices_dir: str) -> io.BytesIO:
         """
         Generate a graph showing the price history for the given item over the last 14 days.
-        
+
         Args:
-            item_name (str): The name of the item to generate the price history for.
+            item_name_eng (str): The English name of the item for looking up prices.
+            item_name_display (str): The name of the item (English or German) to display in the graph.
             prices_dir (str): The directory containing the daily price JSON files.
-            
+
         Returns:
             io.BytesIO: The graph image as a file-like object.
         """
@@ -166,8 +191,8 @@ class MarketCog(commands.Cog):
                 with open(price_file, "r") as f:
                     daily_prices = json.load(f)
                     for category, items in daily_prices.items():
-                        if item_name in items:
-                            for price_info in items[item_name]:
+                        if item_name_eng in items:
+                            for price_info in items[item_name_eng]:
                                 if price_info['orderSide'] == 'BUY':
                                     buy_prices[date_str] = price_info['price']
                                 elif price_info['orderSide'] == 'SELL':
@@ -191,8 +216,8 @@ class MarketCog(commands.Cog):
         plt.xlabel('Datum')
         plt.ylabel('Preis')
 
-        # Format item name for the title
-        formatted_item_name = self.format_item_name(item_name)
+        # Use the appropriate display name for the title
+        formatted_item_name = self.format_item_name(item_name_display)
         plt.title(f'Preisverlauf für {formatted_item_name}', color='white')
         plt.legend()
 
@@ -291,35 +316,42 @@ class MarketCog(commands.Cog):
             interaction (discord.Interaction): The interaction object for the command.
             item_name (str): The name of the item to fetch the price for.
         """
-        
+
         # Load items and prices data
         with open(self.items_file, "r") as f:
             items = json.load(f)
         with open(self.prices_file, "r") as f:
             prices = json.load(f)
 
-        # Find the best match from items list
-        best_match = self.find_best_match(item_name, items)
-        if best_match:
-            item_name_formatted = self.format_item_name(best_match)
-            item_image_url = self.get_item_image_url(best_match)
+        # Find the best match from items list (using substring first, then fuzzy if needed)
+        best_match_eng, best_match_ger = self.find_best_match(item_name, items)
+        
+        if best_match_eng:
+            # Always use the English name for internal operations like price lookup
+            item_name_formatted = self.format_item_name(best_match_eng)
+
+            # Determine the display name based on user query (use German if closer, else English)
+            display_name = best_match_ger if item_name.lower() in best_match_ger.lower() else best_match_eng
+
+            item_image_url = self.get_item_image_url(best_match_eng)  # Always use English name for URL lookup
+
+            # Find the price using the English name
             buy_price = None
             sell_price = None
             category_found = None
 
-            # Find prices in the prices data
             for category, category_items in prices.items():
-                if best_match in category_items:
+                if best_match_eng in category_items:
                     category_found = category
-                    for price_info in category_items[best_match]:
+                    for price_info in category_items[best_match_eng]:
                         if price_info['orderSide'] == 'BUY':
                             buy_price = price_info['price']
                         elif price_info['orderSide'] == 'SELL':
                             sell_price = price_info['price']
-                    break  # Exit loop once the item is found
-            
+                    break
+
             # Create the embed
-            embed = discord.Embed(title=item_name_formatted, 
+            embed = discord.Embed(title=self.format_item_name(display_name), 
                                 description=f"**Kategorie**: {category_found or 'NOT_FOUND'}", 
                                 color=self.embed_color)
 
@@ -342,15 +374,14 @@ class MarketCog(commands.Cog):
 
             # Generate price history graph and add it to the embed
             prices_dir = 'data/prices'
-            graph_image = self.generate_price_history_graph(best_match, prices_dir)
+            graph_image = self.generate_price_history_graph(best_match_eng, display_name, prices_dir)
             if graph_image:
                 graph_file = File(graph_image, filename='price_history.png')
                 files.append(graph_file)
                 embed.set_image(url="attachment://price_history.png")
             
-            embed.set_footer(text=f"{config['name']} • JinglingJester")
-
-            # Send the embed with attached files (multiple files)
+            # Set footer and send message
+            embed.set_footer(text=f"{self.config['name']} • JinglingJester")
             await interaction.response.send_message(embed=embed, files=files)
         else:
             await interaction.response.send_message("Kein passender Item gefunden.")
