@@ -13,6 +13,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 import io
 from datetime import datetime as dt
+import requests
+from discord import File
 
 # Retrieve the current file path and name
 current_file_path = __file__
@@ -236,9 +238,26 @@ class MarketCog(commands.Cog):
         return ' '.join(word.capitalize() for word in item_name.split('_'))
 
     def get_item_image_url(self, item_name: str) -> str:
-        """Generate the URL for the item image."""
+        """Get the item image URL from the local directory, API, or fallback image."""
         formatted_name = item_name.lower().replace(' ', '_')
-        return f"https://mc.nerothe.com/img/1.21/minecraft_{formatted_name}.png"
+        local_image_path = f"data/items/minecraft_{formatted_name}.png"
+        fallback_image = "data/imagenotfound.png"
+        
+        # Check if the image exists locally
+        if os.path.exists(local_image_path):
+            return local_image_path  # Return the local path for sending as a file
+
+        # Try to get the image from the API if it doesn't exist locally
+        url = f"https://img.mc-api.io/{formatted_name}.png"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200 and 'image' in response.headers['Content-Type']:
+                return url  # Return the URL for the embed thumbnail
+        except requests.RequestException:
+            pass  # Fallback if any exception occurs
+
+        # If all fails, return the fallback image
+        return fallback_image  # Return fallback local path
 
     def format_price(self, price: int) -> str:
         """Format price with thousand separators."""
@@ -299,32 +318,40 @@ class MarketCog(commands.Cog):
                             sell_price = price_info['price']
                     break  # Exit loop once the item is found
             
-            if category_found:
-                embed = discord.Embed(title=item_name_formatted, description=f"**Kategorie**: {category_found}", color=self.embed_color)
-            else:
-                embed = discord.Embed(title=item_name_formatted, description=f"**Kategorie**: NOT_FOUND", color=self.embed_color)
-            
-            embed.set_thumbnail(url=item_image_url)
+            # Create the embed
+            embed = discord.Embed(title=item_name_formatted, 
+                                description=f"**Kategorie**: {category_found or 'NOT_FOUND'}", 
+                                color=self.embed_color)
 
-            if buy_price is not None:
-                embed.add_field(name="Kaufpreis", value=self.format_price(buy_price), inline=True)
-            else:
-                embed.add_field(name="Kaufpreis", value="Nicht verfügbar", inline=True)
+            # Initialize files list for attachments
+            files = []
 
-            if sell_price is not None:
-                embed.add_field(name="Verkaufspreis", value=self.format_price(sell_price), inline=True)
+            # Check if the image is local or a URL
+            if os.path.exists(item_image_url):
+                # If it's a local file, send it as an attachment
+                file = File(item_image_url, filename="image.png")
+                files.append(file)
+                embed.set_thumbnail(url="attachment://image.png")
             else:
-                embed.add_field(name="Verkaufspreis", value="Nicht verfügbar", inline=True)
+                # Use the API image URL directly in the embed
+                embed.set_thumbnail(url=item_image_url)
+
+            # Add buy and sell prices
+            embed.add_field(name="Kaufpreis", value=self.format_price(buy_price) if buy_price else "Nicht verfügbar", inline=True)
+            embed.add_field(name="Verkaufspreis", value=self.format_price(sell_price) if sell_price else "Nicht verfügbar", inline=True)
 
             # Generate price history graph and add it to the embed
             prices_dir = 'data/prices'
             graph_image = self.generate_price_history_graph(best_match, prices_dir)
-            file = discord.File(fp=graph_image, filename='price_history.png')
-            embed.set_image(url="attachment://price_history.png")
+            if graph_image:
+                graph_file = File(graph_image, filename='price_history.png')
+                files.append(graph_file)
+                embed.set_image(url="attachment://price_history.png")
             
             embed.set_footer(text=f"{config['name']} • JinglingJester")
 
-            await interaction.response.send_message(embed=embed, file=file)
+            # Send the embed with attached files (multiple files)
+            await interaction.response.send_message(embed=embed, files=files)
         else:
             await interaction.response.send_message("Kein passender Item gefunden.")
 
