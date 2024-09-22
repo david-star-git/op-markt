@@ -12,7 +12,7 @@ import urllib.parse
 class DataFetcher(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.json_file_path = 'data/op-items_data.json'
+        self.json_file_path = 'data/op_items_data.json'
         self.config_file = "data/config.json"
 
         with open(self.config_file, "r") as f:
@@ -105,9 +105,14 @@ class DataFetcher(commands.Cog):
             # Download and parse data from each URL
             for url in urls:
                 category = url.split('/')[-2]
+                # Replace "ue", "oe", "ae" with "ü", "ö", "ä"
+                category = category.replace("ue", "ü").replace("oe", "ö").replace("ae", "ä")
+                # Encode the category
+                encoded_category = urllib.parse.quote(category)
+
                 soup = await self.download_data(url)
                 if soup:
-                    items_data.setdefault(category, {})  # Ensure the category exists in the dictionary
+                    items_data.setdefault(encoded_category, {})  # Ensure the encoded category exists in the dictionary
                     for img in soup.find_all("img"):
                         src = img.get("src")
                         if "assets/op" in src:
@@ -117,7 +122,7 @@ class DataFetcher(commands.Cog):
                             item_data = {
                                 "price": price
                             }
-                            items_data[category][item_name] = item_data
+                            items_data[encoded_category][item_name] = item_data
 
             # Save updated data to JSON file
             with open(self.json_file_path, 'w') as f:
@@ -145,9 +150,10 @@ class DataFetcher(commands.Cog):
             category, item_name, item_data = best_match
             formatted_item_name = self.format_item_name(item_name)
 
+            decoded_category = urllib.parse.unquote(category)
             embed = discord.Embed(
                 title=formatted_item_name,
-                description=f"**Kategorie**: {category.title()}\n**Preis**: {item_data['price']}"
+                description = f"**Kategorie**: {decoded_category.title()}\n**Preis**: {item_data['price']}"
             )
             item_image_url = f"https://wiki.opsucht.net/assets/op/item/{category}/{item_name}"
             lore_image_url = f"https://wiki.opsucht.net/assets/op/lore/{category}/{item_name}"
