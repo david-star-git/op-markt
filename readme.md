@@ -38,7 +38,7 @@ The OP-Markt Bot is a versatile tool designed to enhance the Minecraft experienc
 
 #### Install Dependencies
 
-Install the required dependencies: `pip install discord.py aiohttp matplotlib pandas aiosqlite`
+Install the required dependencies: `pip install discord.py aiohttp matplotlib pandas aiosqlite beautifulsoup4`
 
 #### Configure API Credentials
 
