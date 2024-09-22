@@ -145,7 +145,8 @@ class DataFetcher(commands.Cog):
             items_data = json.load(f)
 
         # Fuzzy find the best match
-        best_match = await self.find_best_match(query, items_data)
+        encoded_query = urllib.parse.quote(query)
+        best_match = await self.find_best_match(encoded_query, items_data)
         if best_match:
             category, item_name, item_data = best_match
             formatted_item_name = self.format_item_name(item_name)

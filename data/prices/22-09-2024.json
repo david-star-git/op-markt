@@ -2754,8 +2754,8 @@
             },
             {
                 "orderSide": "SELL",
-                "activeOrders": 10,
-                "price": 750000.1
+                "activeOrders": 11,
+                "price": 800000.0
             }
         ],
         "SHULKER_BOX": [
